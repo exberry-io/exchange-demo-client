@@ -1,0 +1,48 @@
+
+<div class="d-flex flex-column h-100 exchange-order-book">
+	<div class="title">
+		<div>Order Book ({{exService.instrument.name}})</div>
+	</div>
+	<div class="list-container-row headers">
+		<div class="price">Price</div>
+		<div class="quantity">Quantity</div>
+		<div class="bar"></div>
+	</div>
+	<div id="order-book-lctop" class="list-container">
+		<div id="order-book-lctop-scroll" class="_inner _top"  [class.v-hidden]="exService.loading">
+			<ng-container *ngIf="!exService.loading">
+				<div [id]="'ob-row-' + row.id" class="list-container-row _buy"
+					 matRipple
+					 *ngFor="let row of exService.orderBook | filterBy: { side: 'Sell' } | reverseOrder | slice:0:10"
+					 (click)="injectOrder(row)">
+					<div class="price">{{row.price | iDecimal:'p'}}</div>
+					<div class="quantity">{{row.quantity | iDecimal:'q'}}</div>
+					<div class="bar">
+						<div class="bar-content trend-down-bg" [ngStyle]="{width:row.barQ + '%'}"></div>
+					</div>
+				</div>
+			</ng-container>
+		</div>
+	</div>
+	<div class="market-value bg-body">
+		<div [class.v-hidden]="exService.loading">
+			<span>{{exService.instrument.marketRate | iDecimal:'p'}}</span>
+			<mat-icon class="trend-symbol mr-2" [ngClass]="exService.instrument.trendValue > 0 ? 'trend-up' : 'trend-down'">{{exService.instrument.trendValue > 0 ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</mat-icon>
+		</div>
+		
+	</div>
+	<div class="list-container">
+		<div class="_inner pt-3" [class.v-hidden]="exService.loading">
+			<div [id]="'ob-row-' + row.id" class="list-container-row _sell"
+					matRipple
+					*ngFor="let row of exService.orderBook | filterBy: { side: 'Buy' } | reverseOrder | slice:0:10"
+					(click)="injectOrder(row)">
+				<div class="price">{{row.price | iDecimal:'p'}}</div>
+				<div class="quantity">{{row.quantity | iDecimal:'q'}}</div>
+				<div class="bar">
+					<div class="bar-content trend-up-bg" [ngStyle]="{width:row.barQ + '%'}"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

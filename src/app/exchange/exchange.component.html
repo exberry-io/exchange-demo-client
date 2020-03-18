@@ -1,0 +1,186 @@
+
+<mat-drawer-container class="exchange-container dark-theme" [hasBackdrop]="sideNav.hasBackdrop">
+	<mat-drawer #drawer [mode]="sideNav.mode" style="min-width:250px" [class.bg-forground]="true || sideNav.mode == 'side'">
+		<app-exchange-simulator [sideNav]="sideNav"></app-exchange-simulator>
+	</mat-drawer>
+	<mat-drawer-content>
+
+		<!--START TOP BAR-->
+		<div class="exchange-bar">
+			<div class="_inner">
+				<button mat-icon-button (click)="drawer.toggle()">
+					<!--<mat-icon class="mr-2">menu</mat-icon>-->
+					<!--<span class="text-light text-uppercase">Exchange Client</span>-->
+                    <img src="assets/images/logo_dark.svg" style="height:15px"/>
+				</button>
+
+				<span class="flex-grow-1"></span>
+
+                <div ng-if="dataService.user.balance" class="_balance row row-narrow mr-4">
+                    <div class="col _txt txt-trend-up">Balance: </div>
+                    <div class="col _val numeric">{{dataService.user.balance | number:'1.1-1'}}</div>
+                </div>
+
+
+                <button mat-icon-button [matMenuTriggerFor]="infoMenu" *ngIf="exService.infoStack.length">
+                    <mat-icon id="dvInfoCounter" class="md" [matBadge]="exService.infoStack.length" matBadgeColor="warn" style="position:relative; top:-3px"><i class="exfont-bell"></i></mat-icon>
+                </button>
+                <mat-menu #infoMenu="matMenu" xPosition="before" [overlapTrigger]="false">
+                    <div class="p-2" *ngFor="let o of exService.infoStack">
+                        <div style="font-size:14px;">
+                            <small style="color:#ffe200;">{{o.timestamp | date:'h:mm:ss a'}}</small>
+                            <div>{{o.message}}</div>
+                        </div>
+                    </div>
+                </mat-menu>
+
+				<button mat-icon-button [matMenuTriggerFor]="layoutMenu">
+					<mat-icon class="md" style="position:relative; top:-3px"><i class="exfont-cog" style="color:#6A6A6A"></i></mat-icon>
+				</button>
+				<mat-menu #layoutMenu="matMenu" xPosition="before" [overlapTrigger]="false">
+					<button mat-menu-item (click)="layoutId = 'defaultLayout'" [class.active]="layoutId == 'defaultLayout'">
+						<span>Layout 1</span>
+					</button>
+					<button mat-menu-item (click)="layoutId = 'layout1'" [class.active]="layoutId == 'layout1'">
+						<span>Layout 2</span>
+					</button>
+					<button mat-menu-item (click)="layoutId = 'layout2'" [class.active]="layoutId == 'layout2'">
+						<span>Layout 3</span>
+					</button>
+				</mat-menu>
+
+				<button mat-icon-button>
+					<img src="assets/images/falg.png" />
+				</button>
+
+				<button class="user-btn" mat-button [matMenuTriggerFor]="signInMenu">
+					<!--<span class="avatar">{{'SS'}}</span>-->
+					{{dataService.user.name}}
+					<mat-icon>expand_more</mat-icon>
+				</button>
+				<mat-menu #signInMenu="matMenu" xPosition="before" [overlapTrigger]="false">
+					<button mat-menu-item>
+						<span>Logout</span>
+					</button>
+				</mat-menu>
+			</div>
+		</div>
+		<!--END TOP BAR-->
+
+		<div class="exchange-layout _dragging">
+			<!--START INSTRUMENTS BAR-->
+			<div class="instruments-bar">
+				<div class="_inner">
+                    <ng-container *ngFor="let _instrument of dataService.meta.instruments">
+                        <button mat-flat-button class="bt-trans"
+                                *ngIf="!_instrument.hidden"
+                                [class.selected]="_instrument == instrument"
+                                (click)="selectInstrument(_instrument)">
+                            <div class="title">{{_instrument.name}}</div>
+                            <div class="_trend">
+                                <span class="symbol">{{_instrument.instrumentInstance.instrument}}</span>
+                                <span class="trend numeric" *ngIf="_instrument.trendValue || _instrument.trendValue === 0">{{_instrument.trendValue | number:'1.1-1'}}%</span>
+                                <mat-icon class="trend-symbol xs" [ngClass]="_instrument.trendValue > 0 ? 'up' : 'down'">{{_instrument.trendValue > 0 ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</mat-icon>
+                            </div>
+                        </button>
+                    </ng-container>
+				</div>
+			</div>
+			<!--END INSTRUMENTS BAR-->
+
+
+			<div class="exchange-layout-panes" [ngSwitch]="layoutId">
+				<ng-container *ngSwitchCase="'layout1'">
+					<as-split direction="horizontal" [gutterSize]="gutterSize" (dragStart)="dragStart($event)" (dragEnd)="dragEnd()">
+						<!--START PLACE ORDER-->
+						<as-split-area [size]="narrowColWidth">
+							<app-place-order [options]="exchangeOptions" (onAction)="onPlaceOrderAction($event)"></app-place-order>
+						</as-split-area>
+						<!--END PLACE ORDER-->
+						<!--START ORDER BOOK-->
+						<as-split-area [size]="narrowColWidth">
+							<app-order-book [options]="exchangeOptions" (onAction)="onOrderBookAction($event)"></app-order-book>
+						</as-split-area>
+						<!--END ORDER BOOK-->
+						<as-split-area [size]="wideColWidth">
+							<as-split direction="vertical" [gutterSize]="gutterSize" (dragStart)="dragStart($event)" (dragEnd)="dragEnd()">
+								<!--START CHART-->
+								<as-split-area [size]="exchangeOptions.taHeightDiff" class="tv-Chart-container" [tvChart]="{instrument:instrument}"></as-split-area>
+								<!--END CHART-->
+								<as-split-area [size]="exchangeOptions.taHeight">
+									<app-order-tables [options]="exchangeOptions" (onAction)="onTablesAction($event)"></app-order-tables>
+								</as-split-area>
+							</as-split>
+						</as-split-area>
+					</as-split>
+				</ng-container>
+
+				<ng-container *ngSwitchCase="'layout2'">
+					<as-split direction="horizontal" [gutterSize]="gutterSize" (dragStart)="dragStart($event)" (dragEnd)="dragEnd()">
+
+						<as-split-area [size]="widerColWidth">
+							<as-split direction="vertical" [gutterSize]="gutterSize" (dragStart)="dragStart($event)" (dragEnd)="dragEnd()">
+								<!--START PLACE ORDER-->
+								<as-split-area [size]="50">
+									<app-place-order [options]="exchangeOptions" (onAction)="onPlaceOrderAction($event)"></app-place-order>
+								</as-split-area>
+								<!--END PLACE ORDER-->
+								<!--START ORDER BOOK-->
+								<as-split-area [size]="50">
+									<app-order-book class="in-col" [options]="exchangeOptions" (onAction)="onOrderBookAction($event)"></app-order-book>
+								</as-split-area>
+								<!--END ORDER BOOK-->
+							</as-split>
+						</as-split-area>
+
+						<as-split-area [size]="100 - widerColWidth">
+							<as-split direction="vertical" [gutterSize]="gutterSize" (dragStart)="dragStart($event)" (dragEnd)="dragEnd()">
+								<!--START CHART-->
+								<as-split-area [size]="exchangeOptions.taHeightDiff" class="tv-Chart-container" [tvChart]="{instrument:instrument}"></as-split-area>
+								<!--END CHART-->
+								<as-split-area [size]="exchangeOptions.taHeight" >
+									<app-order-tables [options]="exchangeOptions" (onAction)="onTablesAction($event)"></app-order-tables>
+								</as-split-area>
+							</as-split>
+						</as-split-area>
+					</as-split>
+				</ng-container>
+
+				<ng-container *ngSwitchDefault>
+					<as-split direction="vertical" useTransition="true" [gutterSize]="gutterSize" (dragStart)="dragStart($event)" (dragEnd)="dragEnd()">
+						<as-split-area [size]="exchangeOptions.taHeightDiff">
+							<as-split direction="horizontal" [gutterSize]="gutterSize" (dragStart)="dragStart($event)" (dragEnd)="dragEnd()">
+								<!--START PLACE ORDER-->
+								<as-split-area [size]="narrowColWidth">
+									<app-place-order [options]="exchangeOptions" (onAction)="onPlaceOrderAction($event)"></app-place-order>
+								</as-split-area>
+								<!--END PLACE ORDER-->
+								<!--START ORDER BOOK-->
+								<as-split-area [size]="narrowColWidth">
+									<app-order-book [options]="exchangeOptions" (onAction)="onOrderBookAction($event)"></app-order-book>
+								</as-split-area>
+								<!--END ORDER BOOK-->
+								<!--START CHART-->
+								<as-split-area class="tv-Chart-container" [size]="wideColWidth" [tvChart]="{instrument:instrument}"></as-split-area>
+								<!--END CHART-->
+							</as-split>
+						</as-split-area>
+						<as-split-area [size]="exchangeOptions.taHeight" >
+							<app-order-tables [options]="exchangeOptions" (onAction)="onTablesAction($event)"></app-order-tables>
+						</as-split-area>
+					</as-split>
+				</ng-container>
+
+			</div>
+		</div>
+
+
+	</mat-drawer-content>
+</mat-drawer-container>
+
+
+
+<div class="exchange-loader" *ngIf="exService.loading">
+	<mat-spinner [strokeWidth]="5" color="accent"></mat-spinner>
+</div>
+

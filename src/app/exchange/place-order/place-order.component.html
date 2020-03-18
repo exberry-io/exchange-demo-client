@@ -1,0 +1,72 @@
+<block-ui [delayStop]="500">
+    <form #accountForm="ngForm" class="exchange-place-order">
+
+        <div class="title">
+            <div>Place Order</div>
+        </div>
+
+        <div class="_inner">
+            <div class="order-value-type">
+                <div class="row row-narrow">
+                    <div class="col">
+                        <button type="button" mat-flat-button class="bt-light btn-block" (click)="options.newOrder.orderType = 'Limit'" [class.selected]="options.newOrder.orderType == 'Limit'">
+                            Limit
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button type="button" mat-flat-button class="bt-light btn-block" (click)="options.newOrder.orderType = 'Market'" [class.selected]="options.newOrder.orderType == 'Market'">
+                            Market
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-values">
+                <div class="row row-narrow">
+                    <div class="col">
+                        <div class="form-group" style="min-width:120px">
+                            <label>Quantity</label>
+                            <input type="number" class="form-control numeric" [(ngModel)]="options.newOrder.quantity" name="quantity" required min="1" />
+                        </div>
+                    </div>
+                    <div class="col" *ngIf="options.newOrder.orderType == 'Limit'">
+                        <div class="form-group" style="min-width:120px">
+                            <label>Price</label>
+                            <input type="number" class="form-control numeric" [(ngModel)]="options.newOrder.price" name="price" required min="1" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="order-action-type">
+                <div class="row row-narrow">
+                    <div class="col">
+                        <button type="submit" mat-flat-button class="bt-trend-up btn-block" (click)="placeOrder('Buy', accountForm)">
+                            Buy
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button type="submit" mat-flat-button class="bt-trend-down btn-block" (click)="placeOrder('Sell', accountForm)">
+                            Sell
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-helpers">
+                <div class="row row-narrow text-xs">
+                    <div class="col">
+                        <div class="text-muted-sub mb-1">Order Value</div>
+                        <div class="numeric">{{getOrderValue()}}</div>
+                    </div>
+                    <div class="col" ng-if="dataService.user.balance">
+                        <div class="text-muted-sub mb-1">Available Balance</div>
+                        <div class="numeric">{{dataService.user.balance | number:'1.1-1'}}</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</block-ui>

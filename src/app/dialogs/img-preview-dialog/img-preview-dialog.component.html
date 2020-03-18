@@ -1,0 +1,30 @@
+
+<ng-container [ngSwitch]="data.type">
+	<div class="window" *ngSwitchCase="'img'">
+		<div class="dialog-title d-flex justify-content-start align-items-center">
+			<div class="title flex-grow-1">{{data.title || 'Preview'}}</div>
+			<button mat-icon-button mat-dialog-close>
+				<mat-icon aria-label="Close Dialog">close</mat-icon>
+			</button>
+		</div>
+		<div class="frame img" [style.background-image]="'url('+ data.url +')' | safeStyle"></div>
+	</div>
+
+	<!--<div class="window" [dir]="data.direction" *ngSwitchCase="frame">
+		<div class="frame">
+			<iframe [src]="data.url | safeURL" *ngIf="data.url"></iframe>
+		</div>
+		<mat-dialog-actions>
+			<button mat-button mat-dialog-close>{{data.okay}}</button>
+		</mat-dialog-actions>
+	</div>
+
+	<div class="message" [dir]="data.direction" *ngSwitchCase="text">
+		<h2 mat-dialog-title>{{data.title}}</h2>
+		<mat-dialog-content>{{data.description}}</mat-dialog-content>
+		<mat-dialog-actions>
+			<button mat-button mat-dialog-close>{{data.okay}}</button>
+		</mat-dialog-actions>
+	</div>-->
+
+</ng-container>

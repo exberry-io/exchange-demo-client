@@ -1,0 +1,58 @@
+@font-face {
+  font-family: 'exchange';
+  src:
+    url('fonts/exchange.ttf?z3y98t') format('truetype'),
+    url('fonts/exchange.woff?z3y98t') format('woff'),
+    url('fonts/exchange.svg?z3y98t#exchange') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="exfont-"], [class*=" exfont-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'exchange' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.exfont-times:before {
+  content: "\e90a";
+}
+.exfont-pushpin:before {
+  content: "\e909";
+}
+.exfont-cogs:before {
+  content: "\e906";
+}
+.exfont-cog:before {
+  content: "\e907";
+}
+.exfont-wrench:before {
+  content: "\e908";
+}
+.exfont-angle-down:before {
+  content: "\e902";
+}
+.exfont-angle-up:before {
+  content: "\e903";
+}
+.exfont-angle-right:before {
+  content: "\e904";
+}
+.exfont-angle-left:before {
+  content: "\e905";
+}
+.exfont-gears:before {
+  content: "\e900";
+}
+.exfont-bell:before {
+  content: "\e901";
+}

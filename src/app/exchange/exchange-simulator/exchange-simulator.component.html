@@ -1,0 +1,214 @@
+
+
+
+
+<div class="px-2 pt-2">
+	<div class="row row-narrow">
+		<div class="col">
+			<button type="button" mat-flat-button class="bt-trend-up btn-block text-uppercase" (click)="exService.start()">
+				Restart
+			</button>
+
+		</div>
+		<div class="col">
+			<button type="button" mat-flat-button class="bt-trend-down btn-block text-uppercase" (click)="exService.stop()">
+				Stop
+			</button>
+		</div>
+		<div class="col" style="max-width:50px">
+			<button mat-icon-button (click)="sideNav.mode = sideNav.mode == 'over' ? 'side' : 'over'" style="position:relative; top:-5px;">
+				<mat-icon class="base"><i class="exfont-pushpin" style="display:inline-block; transition:all ease-in-out 0.2s; position:relative; top:-5px" [ngStyle]="sideNav.mode != 'over' && {'transform': 'rotate(-45deg)'}"></i></mat-icon>
+			</button>
+		</div>
+	</div>
+</div>
+
+
+
+<mat-tab-group class="mat-tab-group-narrow">
+	<mat-tab>
+		<ng-template mat-tab-label>
+			<span class="text-uppercase font-weight-bold">Simulator</span>
+		</ng-template>
+		<div class="">
+
+			<mat-accordion class="mat-accordion-trans">
+				<!--ORDERBOOK INITIALIZATION-->
+				<mat-expansion-panel expanded>
+					<mat-expansion-panel-header>
+						Orderbook Initialization
+					</mat-expansion-panel-header>
+					<form (ngSubmit)="doOrderbookInitialization()" #simOIForm="ngForm">
+						<div>
+							<div class="form-group">
+								<label>Starting price</label>
+								<input type="number" class="form-control form-control-sm" [(ngModel)]="sim1.startingPrice" name="startingPrice" required>
+							</div>
+							<div class="form-group">
+								<label>Orderbook depth</label>
+								<input type="number" class="form-control form-control-sm" [(ngModel)]="sim1.obDepth" name="orderbookDepth" required>
+							</div>
+							<div class="form-group">
+								<label>Max quantity</label>
+								<input type="number" class="form-control form-control-sm" [(ngModel)]="sim1.obMaxPriceQuantity" name="obMaxPriceQuantity" required>
+							</div>
+							<div class="form-group">
+								<label>Min step size</label>
+								<input type="number" class="form-control form-control-sm" [(ngModel)]="sim1.minStepSize" name="minStepSize" required>
+							</div>
+							<div>
+								<button type="submit" mat-flat-button class="bt-light btn-block text-uppercase" [disabled]="!simOIForm.valid">
+									Generate
+								</button>
+							</div>
+						</div>
+					</form>
+
+				</mat-expansion-panel>
+				<!--/ ORDERBOOK INITIALIZATION-->
+				<!--TRADING SIMULATION-->
+				<mat-expansion-panel>
+					<mat-expansion-panel-header>
+						Trading Simulation
+					</mat-expansion-panel-header>
+
+					<form (ngSubmit)="toggleTradingSimulation()" #simTSForm="ngForm">
+						<div class="form-group">
+							<label>Number of simulations</label>
+							<input type="number" class="form-control form-control-sm" [(ngModel)]="sim2.groupPairsCount" name="groupPairsCount" required [disabled]="sim2.started">
+						</div>
+						<div class="form-group">
+							<label>Starting price</label>
+							<input type="number" class="form-control form-control-sm" [(ngModel)]="sim2.startingPrice" name="startingPrice" required [disabled]="sim2.started">
+						</div>
+						<div class="form-group">
+							<label>Max step size</label>
+							<input type="number" class="form-control form-control-sm" [(ngModel)]="sim2.maxStepIncrease" name="maxStepIncrease" required [disabled]="sim2.started">
+						</div>
+						<div class="form-group">
+							<label>Min step size</label>
+							<input type="number" class="form-control form-control-sm" [(ngModel)]="sim2.minStepSize" name="minStepSize" required [disabled]="sim2.started">
+						</div>
+						<div class="form-group">
+							<label>Min quantity</label>
+							<input type="number" class="form-control form-control-sm" [(ngModel)]="sim2.minQuantity" name="minQuantity" required [disabled]="sim2.started">
+						</div>
+						<div class="form-group">
+							<label>Max quantity</label>
+							<input type="number" class="form-control form-control-sm" [(ngModel)]="sim2.maxQuantity" name="maxQuantity" required [disabled]="sim2.started">
+						</div>
+						<div class="form-group">
+							<label>Orders time interval</label>
+							<input type="number" class="form-control form-control-sm" [(ngModel)]="sim2.ordersTimeInterval" name="ordersTimeInterval" required [disabled]="sim2.started">
+						</div>
+						<div>
+							<button type="submit" mat-flat-button class="bt-light btn-block text-uppercase" [disabled]="!sim2.started && !simTSForm.valid">
+								{{sim2.started ? 'Stop Simulation' : 'Start Simulation' }} <span class="inline ml-2" *ngIf="sim2.started">{{sim2Config.index}} / {{sim2Config.count}}</span>
+							</button>
+						</div>
+					</form>
+				</mat-expansion-panel>
+				<!--/ TRADING SIMULATION-->
+			</mat-accordion>
+		</div>
+	</mat-tab>
+	<mat-tab>
+		<ng-template mat-tab-label>
+			<span class="text-uppercase font-weight-bold">General</span>
+		</ng-template>
+		<div class="pt-3">
+			<form (ngSubmit)="placeOrder(injectOrderForm)" #injectOrderForm="ngForm">
+				<div class="px-4">
+					<div>
+						<div class="form-group form-group-sm">
+							<label>User</label>
+							<select class="form-control form-control-sm" [(ngModel)]="newOrder.userId" name="user">
+								<option *ngFor="let user of dataService.meta.users" [ngValue]="user.userId">
+									{{user.name}} ({{user.userId}})
+								</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label>Order Type</label>
+							<select class="form-control form-control-sm" [(ngModel)]="newOrder.orderType" (change)="iOrderTypeChange()" name="orderType">
+								<option value="Limit">Limit</option>
+								<option value="Market">Market</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label>Side</label>
+							<select class="form-control form-control-sm" [(ngModel)]="newOrder.side" name="side">
+								<option value="Buy">Buy</option>
+								<option value="Sell">Sell</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label>Quntity</label>
+							<input type="number" class="form-control form-control-sm" [(ngModel)]="newOrder.quantity" name="quantity">
+						</div>
+						<div class="form-group" *ngIf="newOrder.orderType != 'Market'">
+							<label>Price</label>
+							<input type="number" class="form-control form-control-sm" [(ngModel)]="newOrder.price" name="price">
+						</div>
+
+						<div class="form-group">
+							<label>Time In Force</label>
+							<select class="form-control form-control-sm" [(ngModel)]="newOrder.timeInForce"  (change)="iOrderTimeForceChange()" name="timeInForce" required>
+								<ng-container *ngIf="newOrder.orderType == 'Limit'">
+									<option value="GTC">GTC</option>
+									<option value="GTD">GTD</option>
+								</ng-container>
+								<ng-container *ngIf="newOrder.orderType == 'Market'">
+									<option value="FOK">FOK</option>
+									<option value="IOC">IOC</option>
+								</ng-container>
+							</select>
+						</div>
+
+						<div class="form-group" *ngIf="newOrder.timeInForce == 'GTD'">
+							<label>Expiration Date (offset in minutes)</label>
+							<input type="number" class="form-control form-control-sm" min="0" [(ngModel)]="newOrder.offsetMinutes" name="offsetMinutes" required>
+						</div>
+
+						<div>
+							<button type="submit" mat-flat-button class="bt-light btn-block text-uppercase" [disabled]="!injectOrderForm.valid">
+								Inject Order
+							</button>
+						</div>
+					</div>
+				</div>
+			</form>
+			<hr />
+			<div class="px-4">
+				<div class="card">
+					<div class="card-header text-dark font-weight-bold text-uppercase">
+						Change Active User
+					</div>
+					<div class="list-group list-group-flush text-dark">
+						<a class="list-group-item list-group-item-action" *ngFor="let user of dataService.meta.users" [class.active]="user.userId == dataService.user.userId" (click)="selectUser(user)">
+							{{user.name}} ({{user.userId}})
+						</a>
+					</div>
+				</div>
+			</div>
+			<hr />
+			<div class="px-4">
+				<div>
+					<div class="">
+						<mat-checkbox classX="no-margins" [(ngModel)]="exService.logSentRequests">Log Sent Requests</mat-checkbox>
+					</div>
+					<div class="">
+						<mat-checkbox classX="no-margins" [(ngModel)]="exService.logReceivedMessages">Log Received Messages</mat-checkbox>
+					</div>
+					<div class="">
+						<mat-checkbox classX="no-margins" [(ngModel)]="exService.logReconnections">Log Reconnections</mat-checkbox>
+					</div>
+					<div class="">
+						<mat-checkbox classX="no-margins" [(ngModel)]="exService.logErrors">Log Errors</mat-checkbox>
+					</div>
+				</div>
+			</div>
+		</div>
+	</mat-tab>
+</mat-tab-group>
+

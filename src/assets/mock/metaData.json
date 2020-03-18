@@ -1,0 +1,87 @@
+[
+	{
+		"value": {
+			"wsEndPoint": "wss://exchange.om2.com",
+			"secret": "mcrrSDn00tEvi44H2pl58rAHEI7pbfS3mgsSYDWkm4vmrGRQ7Rhm4dP27ZAz",
+			"apiKey": "pZnMFPxf6dGTCr2lElwJyv5qaHjHcPde4wT2bQ65q9Gt0cNZwMgBHx5hT253",
+			"users": [
+				{
+					"name": "Saul Simon",
+					"ipAddress": "127.0.0.1",
+					"currency": "EUR",
+					"userId": "1"
+				},
+				{
+					"name": "Moshe Levi",
+					"ipAddress": "127.0.0.1",
+					"currency": "EUR",
+					"userId": "2"
+				},
+				{
+					"name": "Yair Gat",
+					"ipAddress": "127.0.0.1",
+					"currency": "EUR",
+					"userId": "100"
+				}
+			],
+			"instruments": [
+				{
+					"chartSumbol": "COINBASE:BTCUSD",
+					"key": "INS1",
+					"instrumentInstance": {
+						"name": "Test",
+						"rounding": "down",
+						"instrument": "INS1",
+						"decimalPrecision": "3"
+					},
+					"trendValue": 5.3
+				},
+				{
+					"chartSumbol": "COINBASE:BTCUSD",
+					"key": "BTCUSD",
+					"instrumentInstance": {
+						"name": "Bitcoin",
+						"rounding": "down",
+						"instrument": "BTC",
+						"decimalPrecision": "8"
+					},
+					"trendValue": 5.3
+				},
+				{
+					"chartSumbol": "FX_IDC:XAUUSD",
+					"key": "XAUUSD",
+					"instrumentInstance": {
+						"name": "Gold",
+						"rounding": "down",
+						"instrument": "XAU",
+						"decimalPrecision": "2"
+					},
+					"trendValue": -3.3
+				},
+				{
+					"chartSumbol": "TVC:USOIL",
+					"key": "OILUSD",
+					"instrumentInstance": {
+						"name": "USOIL",
+						"rounding": "down",
+						"instrument": "OIL",
+						"decimalPrecision": "2"
+					},
+					"trendValue": 3.3
+				},
+				{
+					"chartSumbol": "TVC:UKOIL",
+					"key": "UKOILUSD",
+					"instrumentInstance": {
+						"name": "UKOIL",
+						"rounding": "down",
+						"instrument": "OIL",
+						"decimalPrecision": "2"
+					},
+					"trendValue": -4.3
+				}
+			]
+		},
+		"key": "metaData.json"
+	}
+]

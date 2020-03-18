@@ -1,0 +1,63 @@
+
+<div mat-dialog-title class="">
+	<div class="d-flex justify-content-between align-items-center">
+		<div class="h3">
+			{{data.title}}
+		</div>
+		<button mat-icon-button mat-dialog-close>
+			<mat-icon aria-label="Close Dialog">close</mat-icon>
+		</button>
+	</div>
+</div>
+
+
+<div mat-dialog-content>
+	<div  *ngIf="mode == 'prompt'">
+		<div *ngIf="data.content" class="mb-3">{{data.content}}</div>
+
+		<mat-form-field class="w-100" appearance="outline" style="min-width:250px">
+			<mat-label>{{data.label}}</mat-label>
+			<input autocomplete="off" matInput placeholder="{{data.palceholder}}" [(ngModel)]="value" name="value" required>
+		</mat-form-field>
+
+	</div>
+
+	<div *ngIf="mode != 'prompt'">
+		{{data.content}}
+	</div>
+
+</div>
+
+<div mat-dialog-actions *ngIf="mode == 'alert'">
+	<div class="flex-grow-1">
+
+	</div>
+	<button type="button" mat-raised-button color="primary" [mat-dialog-close]="true" cdkFocusInitial>
+		{{data.confirmText}}
+	</button>
+</div>
+
+<div mat-dialog-actions *ngIf="mode == 'confirm'">
+	<div class="flex-grow-1">
+
+	</div>
+	<button type="button" mat-button color="accent" [mat-dialog-close]="false" cdkFocusInitial>
+		{{data.cancelText}}
+	</button>
+	<button type="button" mat-raised-button color="primary" [mat-dialog-close]="true">
+		{{data.confirmText}}
+	</button>
+</div>
+
+
+<div mat-dialog-actions *ngIf="mode == 'prompt'">
+	<div class="flex-grow-1">
+
+	</div>
+	<button type="button" mat-button color="accent" [mat-dialog-close]="false" cdkFocusInitial>
+		{{data.cancelText}}
+	</button>
+	<button type="button" mat-raised-button color="primary" [mat-dialog-close]="value" [disabled]="!value">
+		{{data.confirmText}}
+	</button>
+</div>

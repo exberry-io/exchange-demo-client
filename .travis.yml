@@ -1,0 +1,14 @@
+#sudo: false
+language: node_js
+node_js:
+  - "12.14"
+
+before_script:
+  - npm install -g @angular/cli
+  
+script:
+  - ng build -c production
+
+after_success:
+  # upload HighLow package
+  - bash config/deploy.sh "jivygroup/travisci-demo-client"

@@ -1,0 +1,100 @@
+//-------------------------------------------------------------------->
+// varables
+//-------------------------------------------------------------------->
+
+$bg-background: #181D26;
+$bg-forground: #2A2F37;
+$bg-selected: rgba(0, 0, 0, 0.25);
+$bg-selected-light: rgba(99, 105, 129, 0.3);
+
+$txt-size: 14px;
+$txt-size-sm: 12px;
+$txt-size-md: 16px;
+$txt-size-lg: 28px;
+
+$txt-color: #fff;
+$txt-sub-color: rgba(255, 255, 255, 0.5);
+$muted-title-color: #9398AE;
+$muted-sub-color: #647890;
+
+$accent-up-color: #00C6B2;
+$accent-down-color: #F23567;
+
+$error-color: #e20000;
+$error-txt: #fff;
+
+$success-color: #1DAE05;
+$success-txt: #fff;
+
+$font-alt-1: 'Rajdhani', sans-serif;
+$font-numeric: 'Open Sans', sans-serif;
+
+$link-color: #007bff;
+$toolbar-height: 60px;
+$border-color: rgba(255,255,255,0.1);
+
+
+
+//-------------------------------------------------------------------->
+// material theme
+//-------------------------------------------------------------------->
+
+/* 
+* Material Palletes:
+* https://material.io/guidelines/style/color.html#color-color-palette
+*/
+
+@import '~@angular/material/theming';
+@include mat-core();
+
+/* LIGHT THEME */
+
+$light-primary: mat-palette($mat-gray, 800, 300, 900);
+$light-accent: mat-palette($mat-light-blue);
+$light-warn: mat-palette($mat-deep-orange, A200);
+$light: mat-light-theme(
+    $light-primary,
+    $light-accent,
+    $light-warn
+);
+
+
+$dark-primary: mat-palette($mat-yellow);
+$dark-accent:  mat-palette($mat-amber, A200, A100, A400);
+$dark-warn:    mat-palette($mat-red);
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.dark-theme {
+	color:#fff;
+	background-color:$bg-background;
+
+	table.mat-table,
+	.mat-drawer-container .mat-drawer,
+	.mat-drawer-content{
+		background-color:$bg-background;
+	}
+
+	.cdk-overlay-container .mat-menu-panel{
+		background-color:$bg-forground;
+	}
+
+	.trend-up{color:$accent-up-color}
+	.trend-down{color:$accent-down-color}
+
+	.trend-up-bg{background-color:$accent-up-color}
+	.trend-down-bg{background-color:$accent-down-color}
+	
+
+  @include angular-material-theme($dark-theme);
+}
+
+//-------------------------------------------------------------------->
+// mixins
+//-------------------------------------------------------------------->
+
+
+@mixin numfont {
+    font-family: $font-numeric;
+}
+
+
