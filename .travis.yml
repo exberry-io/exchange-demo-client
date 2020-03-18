@@ -10,5 +10,4 @@ script:
   - ng build -c production
 
 after_success:
-  # upload HighLow package
   - bash config/deploy.sh "jivygroup/travisci-demo-client"
