@@ -47,7 +47,7 @@ export class DataService {
 
 		function preparMetaData(response) {
 			that.meta = _.get(response, '[0].value');
-
+			//if (!that.meta.bidsURL) that.meta.bidsURL = "http://bids.oridemo.com/";
 			_.each(that.meta.users, (user, index) => {
 				if (!user.balance) user.balance = 150000;
 				if (index === 0) that.user = user;

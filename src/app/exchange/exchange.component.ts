@@ -135,4 +135,8 @@ export class ExchangeComponent implements OnInit, OnDestroy {
         }
 	}
 
+	gotoBids() {
+		top.location.href = this.dataService.meta.bidsURL;
+	}
+
 }
