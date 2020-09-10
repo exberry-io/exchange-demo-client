@@ -1,13 +1,13 @@
 #sudo: false
-language: node_js
-node_js:
-  - "12.14"
+#language: node_js
+#node_js:
+#  - "12.14"
 
-before_script:
-  - npm install -g @angular/cli
+#before_script:
+#  - npm install -g @angular/cli
   
-script:
-  - ng build -c production
+#script:
+#  - ng build -c production
 
-after_success:
-  - bash config/deploy.sh "jivygroup/travisci-demo-client"
+#after_success:
+#  - bash config/deploy.sh "jivygroup/travisci-demo-client"
