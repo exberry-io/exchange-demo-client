@@ -265,7 +265,7 @@ export class ExchangeService {
 		let activeOrders = this.activeOrders;
 		if (message.eventTimestamp) {
 			//debugger;
-			message.eventTimestamp = message.eventTimestamp / 1000;
+			message.eventTimestamp = message.eventTimestamp / 1000000;
         }
 		if (this.instrumentInstanceId != message.instrument) return;
 		let bookOrder;
