@@ -161,7 +161,7 @@ export class ExchangeService {
 				"timestamp": timeStamp,
 				"signature": signature
 			},
-			"q": "/om2.exchange.auth/createSession",
+			"q": "exchange.market/createSession",
 			"sid": 1
 		});
 	}
@@ -169,8 +169,8 @@ export class ExchangeService {
 	private initRequests() {
 		//marketRates
 		this.sendRequest({
-			"d": {},
-			"q": "/om2.exchange.market/orderBookDepth",
+			"d": { "trackingNumber": 0},
+			"q": "exchange.market/orderBookDepth",
 			"sid": 10
 		});
 
@@ -206,18 +206,22 @@ export class ExchangeService {
 		this.log('Received Message', message);
 
 		switch (message.q) {
-			case '/om2.exchange.auth/createSession':
-				this.initRequests();
+			case 'exchange.market/createSession':
+				if (message.sig == 1) this.initRequests();
 				break;
-			case '/om2.exchange.market/orderBookDepth':
+			case 'exchange.market/orderBookDepth':
 				this.processorderBookDepth(message.d)
 				break;
-			case '/om2.exchange.orders/placeOrder':
-				this.processPlacedOrder(message);
+			case 'exchange.market/placeOrder':
+				if (message.sig == 1) {
+					this.processPlacedOrder(message);
+				} else return;
 				break;
-			case '/om2.exchange.orders/cancelOrder':
-				this.addInfoStack({ message: 'Order Cancelled Successfully' });
-				this.handleMessageCallBack(message);
+			case 'exchange.market/cancelOrder':
+				if (message.sig == 1) {
+					this.addInfoStack({ message: 'Order Cancelled Successfully' });
+					this.handleMessageCallBack(message);
+				} else return;
 				break;
 			//----------------------------------------------------------------------------------->
 
@@ -259,7 +263,10 @@ export class ExchangeService {
 
 	processorderBookDepth(message) {
 		let activeOrders = this.activeOrders;
-
+		if (message.eventTimestamp) {
+			//debugger;
+			message.eventTimestamp = message.eventTimestamp / 1000000;
+        }
 		if (this.instrumentInstanceId != message.instrument) return;
 		let bookOrder;
 		switch (message.messageType) {
@@ -428,7 +435,7 @@ export class ExchangeService {
 			})
 		}
 		let request = {
-			"q": "/om2.exchange.orders/placeOrder", "d": order
+			"q": "exchange.market/placeOrder", "d": order
 		}
 
 		return new Promise((resolve, reject) => {
@@ -442,7 +449,7 @@ export class ExchangeService {
 
 		if (true) { //order.status != 'Cancelled' && order.remainingQuantity > 0
 			let request = {
-				"q": "/om2.exchange.orders/cancelOrder", "d": {
+				"q": "exchange.market/cancelOrder", "d": {
 					orderId: order.orderId,
 					userId: order.userId,
 					instrument: order.instrument
@@ -458,7 +465,7 @@ export class ExchangeService {
 	// OLD
 	//---------------------------------------------------------------------------------------------->
 
-	public processUserOrderEvent(message) {///om2.exchange.orders/userOrderEvents
+	public processUserOrderEvent(message) {
 		if (message.instrumentInstanceId != this.instrumentInstanceId) return;
 
 		let actionMap: any = {
