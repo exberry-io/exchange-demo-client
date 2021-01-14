@@ -170,7 +170,7 @@ export class ExchangeService {
 		//marketRates
 		this.sendRequest({
 			"d": { "trackingNumber": 0},
-			"q": "exchange.market/orderBookDepth",
+			"q": "v1/exchange.market/orderBookDepth",
 			"sid": 10
 		});
 
@@ -209,15 +209,15 @@ export class ExchangeService {
 			case 'exchange.market/createSession':
 				if (message.sig == 1) this.initRequests();
 				break;
-			case 'exchange.market/orderBookDepth':
+			case 'v1/exchange.market/orderBookDepth':
 				this.processorderBookDepth(message.d)
 				break;
-			case 'exchange.market/placeOrder':
+			case 'v1/exchange.market/placeOrder':
 				if (message.sig == 1) {
 					this.processPlacedOrder(message);
 				} else return;
 				break;
-			case 'exchange.market/cancelOrder':
+			case 'v1/exchange.market/cancelOrder':
 				if (message.sig == 1) {
 					this.addInfoStack({ message: 'Order Cancelled Successfully' });
 					this.handleMessageCallBack(message);
@@ -412,7 +412,8 @@ export class ExchangeService {
 		let order = _.cloneDeep(_order);
 		delete order.isClosePositionOrder;
 
-		order.brokerOrderId = ++this.brokerOrderIdCounter
+		//order.brokerOrderId = ++this.brokerOrderIdCounter;
+		order.mpOrderId = ++this.brokerOrderIdCounter;
 		let timeInforce = 'GTC'
 		switch (order.orderType) {
 			case "Market":
@@ -435,7 +436,7 @@ export class ExchangeService {
 			})
 		}
 		let request = {
-			"q": "exchange.market/placeOrder", "d": order
+			"q": "v1/exchange.market/placeOrder", "d": order
 		}
 
 		return new Promise((resolve, reject) => {
@@ -449,7 +450,7 @@ export class ExchangeService {
 
 		if (true) { //order.status != 'Cancelled' && order.remainingQuantity > 0
 			let request = {
-				"q": "exchange.market/cancelOrder", "d": {
+				"q": "v1/exchange.market/cancelOrder", "d": {
 					orderId: order.orderId,
 					userId: order.userId,
 					instrument: order.instrument

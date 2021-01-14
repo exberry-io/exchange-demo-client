@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import * as _ from 'lodash';
+import { promise } from 'protractor';
 
 
 @Injectable({
@@ -38,11 +39,13 @@ export class DataService {
 		let that = this;
 		if (this.metaSimulated) return this.getSimulated('metaData').then(preparMetaData);
 		else {
-			let payload = {
-				"apiKey": "eyJraWQiOiJmMDRlMmExMy01ZWExLTRjNGYtOWRhYi04OTBiODI3ZGI2ZGIiLCJhbGciOiJSUzI1NiJ9.eyJqdGkiOiJPUkctRERFMzBEODQ0NjI2MDE0OTdFN0QiLCJpYXQiOjE1Njc2ODc0MTksInN1YiI6Ik9SRy1EREUzMEQ4NDQ2MjYwMTQ5N0U3RCIsImlzcyI6InNjYWxlY3ViZS5pbyIsImF1ZCI6Ik9SRy1EREUzMEQ4NDQ2MjYwMTQ5N0U3RCIsInJvbGUiOiJNZW1iZXIifQ.FYUBG1_EvdGPT2bqHW0XE20wl2FthointURbCKTvmlZ92gXO2j459LlCUXLD2BdHxw7TqqkFAo3sW-DOiQ7tMLtE84th9h72U3D3RCHzNGP7Xzlna_4zfS4nv7TXiCk5ZgEpqXMPrWpMRruBk0P5Fk5nldauLFWQYdMyeknTjMssR6NkEDWOOIFvIzFgtoS0GbCPd07kRjVnH9GPA6JqvPjKvTuoOnOvCrVoMHkEKmRWFlsNUcS9gqe4-HUyvOwrvbyjPRoseoxU691nQDoYWwJ__5wClw9J84lgCc0H6-dBNLbIm2ycOa8eb-NzNHUumu4uID0oalyLWFSwumBKkw",
-				"repository": "ExchangeDemoUI"
-			}
-			return this.postClean('https://configuration-service-http.genesis.om2.com/configuration/readList', payload).then(preparMetaData);
+			
+			let promises = [
+				this.getClean('https://sanity.demo.exberry.io/ui-demo/crypto-metaData.json').then(res => [{ value: res }]),
+			]
+			return Promise.all(promises).then(res => {
+				return preparMetaData(res[0]);
+			})
 		}
 
 		function preparMetaData(response) {
@@ -87,6 +90,20 @@ export class DataService {
 	public postClean(url, payload?, headers?): Promise<any> {
 		return new Promise((resolve, reject) => {
 			this.httpClient.post(url, payload || {}, headers || {})
+				.subscribe(
+					(results: any) => {
+						resolve(results);
+					},
+					(err) => {
+						this.handleHttpError(err);
+						reject(err);
+					}
+				);
+		});
+	}
+	public getClean(url, payload?): Promise<any> {
+		return new Promise((resolve, reject) => {
+			this.httpClient.get(url, payload)
 				.subscribe(
 					(results: any) => {
 						resolve(results);
